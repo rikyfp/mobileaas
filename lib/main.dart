@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:myapp/homePage.dart';
 import 'package:myapp/loginPage.dart';
+import 'package:myapp/profilPage.dart';
 import 'package:myapp/registrationPage.dart';
 
 void main() {
@@ -18,7 +19,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.orange,
       ),
         debugShowCheckedModeBanner: false,
-        home: Loginpage());
+        home: LoginPage());
   }
 }
 

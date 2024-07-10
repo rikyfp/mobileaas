@@ -1,72 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:myapp/homePage.dart';
 import 'package:myapp/registrationPage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-class Loginpage extends StatelessWidget {
-  Loginpage({super.key});
+class LoginPage extends StatelessWidget {
+  LoginPage({super.key});
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
 
-  final formkey = GlobalKey<FormState>();
+  final formKey = GlobalKey<FormState>();
 
-  String _loginUrl =
-      'https://fakestoreapi.com/auth/login'; // Replace with your actual URL
+  String _loginUrl = 'https://fakestoreapi.com/auth/login';
 
   Future<void> _login(BuildContext context) async {
     final response = await http.post(
       Uri.parse(_loginUrl),
-      body: {
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
         'username': usernameController.text,
-        'password': passwordController.text
-      },
+        'password': passwordController.text,
+      }),
     );
 
     if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (contecx) {
-        return Homepage();
-      }));
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => Homepage()));
     } else {
-      print('Login failed: ${response.statusCode}');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Login failed: Server error'),
-        ),
-      );
-    }
-  }
-
-  void Login(BuildContext context, String username, String password) {
-    print('Login successful!');
-    if (username == "admin" && password == "admin") {
-      {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) {
-            return Homepage();
-          }),
-        );
-      }
-    } else {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) => AlertDialog(
-          title: const Text('Warning'),
-          content: const Text('Password Salah, silahkan ulangi lagi'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () => Navigator.pop(context, 'Cancel'),
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () => Navigator.pop(context, 'OK'),
-              child: const Text('OK'),
-            ),
-          ],
-        ),
+            content: Text('Login failed: Server error ${response.statusCode}')),
       );
     }
   }
@@ -74,78 +38,145 @@ class Loginpage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Align(alignment: Alignment.centerRight, child: Text('Login')),
-          leading: Icon(Icons.home),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        title: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => LoginPage()),
+            );
+          },
         ),
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
+      ),
+      backgroundColor: Colors.white,
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24.0),
+        child: Center(
+          child: SingleChildScrollView(
             child: Form(
-              key: formkey,
+              key: formKey,
               child: Column(
-                children: <Widget>[
-                  Container(
-                    child: Image.asset("assets/images/gambar-logo.png"),
-                    width: 200,
-                    height: 200,
-                    decoration:
-                        BoxDecoration(borderRadius: BorderRadius.circular(30)),
-                  ),
-                  SizedBox(height: 10),
-                  TextFormField(
-                      validator: (value) {
-                        if (value == null || value!.isEmpty) {
-                          return 'Username tidak boleh kosong';
-                        }
-                        return null;
-                      },
-                      controller: usernameController,
-                      decoration: InputDecoration(
-                          labelText: 'username', border: OutlineInputBorder())),
-                  SizedBox(height: 10),
-                  TextFormField(
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Password tidak boleh kosong';
-                        }
-                        return null;
-                      },
-                      controller: passwordController,
-                      obscureText: true,
-                      decoration: InputDecoration(
-                          labelText: 'password', border: OutlineInputBorder())),
-                  SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => RegisPage()));
-                          },
-                          child: Text('Register')),
-                      ElevatedButton(
-                          onPressed: () {
-                            print('klik login');
-
-                            // if (formkey.currentState!.validate()) {
-
-                            // Login(context, usernameController.text,
-                            //     passwordController.text);
-                            _login(context);
-
-                            // }
-                          },
-                          child: Text('Login')),
+                      Text(
+                        "Hello Again!",
+                        style: GoogleFonts.poppins(
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      Text(
+                        "Welcome Back You’ve Been Missed!",
+                        style: GoogleFonts.poppins(
+                          fontSize: 16,
+                          color: Colors.grey,
+                        ),
+                      ),
                     ],
-                  )
+                  ),
+                  SizedBox(height: 40),
+                  Text(
+                    "Username",
+                    style: GoogleFonts.poppins(fontSize: 16),
+                  ),
+                  SizedBox(height: 8),
+                  TextFormField(
+                    controller: usernameController,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide.none,
+                      ),
+                      filled: true,
+                      fillColor: Colors.grey[200],
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your username';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    "Password",
+                    style: GoogleFonts.poppins(fontSize: 16),
+                  ),
+                  SizedBox(height: 8),
+                  TextFormField(
+                    controller: passwordController,
+                    obscureText: true,
+                    decoration: InputDecoration(
+                      hintText: "••••••••",
+                      suffixIcon: Icon(Icons.visibility_off),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide.none,
+                      ),
+                      filled: true,
+                      fillColor: Colors.grey[200],
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your password';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 16),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        _login(context);
+                      },
+                      child: Text(
+                        "Login",
+                        style: GoogleFonts.poppins(
+                          color: Colors.white,
+                          fontSize: 16,
+                        ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        padding: EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 24),
+                  Center(
+                    child: TextButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => RegistrationPage()),
+                        );
+                      },
+                      child: Text(
+                        "Belum Punya Akun? Daftar",
+                        style: GoogleFonts.poppins(
+                          color: Colors.blue,
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
           ),
-        ));
+        ),
+      ),
+    );
   }
 }
